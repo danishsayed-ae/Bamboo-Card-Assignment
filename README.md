@@ -41,9 +41,9 @@ npx cypress run --reporter mochawesome
 
 
 ## Test Cases Covered
-User Registration - Validate successful user registration.
-User Login - Verify login with valid credentials.
-Product Search & Filtering - Ensure accurate search results.
-Add to Cart & Wishlist - Verify cart and wishlist functionalities.
-Checkout Process - Validate order placement and confirmation.
-Address Management - Update and save address details.
+- User Registration - Validate successful user registration.
+- User Login - Verify login with valid credentials.
+- Product Search & Filtering - Ensure accurate search results.
+- Add to Cart & Wishlist - Verify cart and wishlist functionalities.
+- Checkout Process - Validate order placement and confirmation.
+- Address Management - Update and save address details.

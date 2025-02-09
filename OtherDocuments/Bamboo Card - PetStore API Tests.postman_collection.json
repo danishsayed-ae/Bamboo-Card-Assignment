@@ -1,0 +1,2146 @@
+{
+	"info": {
+		"_postman_id": "f18dad67-028e-4dc7-a0c9-871f1c459d30",
+		"name": "Bamboo Card - PetStore API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35194740"
+	},
+	"item": [
+		{
+			"name": "Positive Test Scenarios",
+			"item": [
+				{
+					"name": "1. Create a new pet with valid data",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with valid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"{{petId}}\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response contains pet ID\", function () {",
+											"    pm.expect(jsonData.id).to.exist;",
+											"});",
+											"",
+											"pm.test(\"Pet ID matches stored value\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet name matches request\", function () {",
+											"    pm.expect(jsonData.name).to.equal(pm.environment.get(\"petName\"));",
+											"});",
+											"",
+											"pm.test(\"Pet status is available\", function () {",
+											"    pm.expect(jsonData.status).to.equal(\"available\");",
+											"});",
+											"",
+											"pm.test(\"Pet category exists\", function () {",
+											"    pm.expect(jsonData.category).to.have.property(\"id\");",
+											"    pm.expect(jsonData.category).to.have.property(\"name\");",
+											"});",
+											"",
+											"pm.test(\"Tags exist in response\", function () {",
+											"    pm.expect(jsonData.tags).to.be.an(\"array\").that.is.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a valid number\", function () {",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"Pet name is a string\", function () {",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a positive number\", function () {",
+											"    pm.expect(jsonData.id).to.be.greaterThan(0);",
+											"});",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"id\");",
+											"    pm.expect(jsonData).to.have.property(\"name\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is either 'available', 'pending' or 'sold'\", function () {",
+											"    pm.expect([\"available\", \"pending\", \"sold\"]).to.include(jsonData.status);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});",
+											"",
+											"pm.test(\"Photo URLs is an array\", function () {",
+											"    pm.expect(jsonData.photoUrls).to.be.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"Response does not contain unexpected fields\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"unexpectedField\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"{{petId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "2. Create a pet with an empty photoUrls array",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Pet with empty photoUrls\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"    pm.expect(pm.response.json().photoUrls).to.eql([]);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"{{petId}}\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response contains pet ID\", function () {",
+											"    pm.expect(jsonData.id).to.exist;",
+											"});",
+											"",
+											"pm.test(\"Pet ID matches stored value\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet name matches request\", function () {",
+											"    pm.expect(jsonData.name).to.equal(pm.environment.get(\"petName\"));",
+											"});",
+											"",
+											"pm.test(\"Pet status is available\", function () {",
+											"    pm.expect(jsonData.status).to.equal(\"available\");",
+											"});",
+											"",
+											"pm.test(\"Pet category exists\", function () {",
+											"    pm.expect(jsonData.category).to.have.property(\"id\");",
+											"    pm.expect(jsonData.category).to.have.property(\"name\");",
+											"});",
+											"",
+											"pm.test(\"Tags exist in response\", function () {",
+											"    pm.expect(jsonData.tags).to.be.an(\"array\").that.is.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a valid number\", function () {",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"Pet name is a string\", function () {",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a positive number\", function () {",
+											"    pm.expect(jsonData.id).to.be.greaterThan(0);",
+											"});",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"id\");",
+											"    pm.expect(jsonData).to.have.property(\"name\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is either 'available', 'pending' or 'sold'\", function () {",
+											"    pm.expect([\"available\", \"pending\", \"sold\"]).to.include(jsonData.status);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});",
+											"",
+											"pm.test(\"Photo URLs is an array\", function () {",
+											"    pm.expect(jsonData.photoUrls).to.be.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"Response does not contain unexpected fields\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"unexpectedField\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"{{petId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "3. Create a pet with multiple tags",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Pet with multiple tags\", function () {",
+											"    const tags = pm.response.json().tags;",
+											"    pm.expect(tags).to.have.length.above(1);",
+											"    tags.forEach(tag => {",
+											"        pm.expect(tag.name).to.be.a('string');",
+											"    });",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"{{petId}}\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 1,\n            \"name\": \"Cute\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Pet with multiple tags\", function () {",
+											"    const tags = pm.response.json().tags;",
+											"    pm.expect(tags).to.have.length.above(1);",
+											"    tags.forEach(tag => {",
+											"        pm.expect(tag.name).to.be.a('string');",
+											"    });",
+											"});",
+											"",
+											"pm.test(\"Response contains pet ID\", function () {",
+											"    pm.expect(jsonData.id).to.exist;",
+											"});",
+											"",
+											"pm.test(\"Pet ID matches stored value\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet name matches request\", function () {",
+											"    pm.expect(jsonData.name).to.equal(pm.environment.get(\"petName\"));",
+											"});",
+											"",
+											"pm.test(\"Pet status is available\", function () {",
+											"    pm.expect(jsonData.status).to.equal(\"available\");",
+											"});",
+											"",
+											"pm.test(\"Pet category exists\", function () {",
+											"    pm.expect(jsonData.category).to.have.property(\"id\");",
+											"    pm.expect(jsonData.category).to.have.property(\"name\");",
+											"});",
+											"",
+											"pm.test(\"Tags exist in response\", function () {",
+											"    pm.expect(jsonData.tags).to.be.an(\"array\").that.is.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a valid number\", function () {",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"Pet name is a string\", function () {",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a positive number\", function () {",
+											"    pm.expect(jsonData.id).to.be.greaterThan(0);",
+											"});",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"id\");",
+											"    pm.expect(jsonData).to.have.property(\"name\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is either 'available', 'pending' or 'sold'\", function () {",
+											"    pm.expect([\"available\", \"pending\", \"sold\"]).to.include(jsonData.status);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});",
+											"",
+											"pm.test(\"Photo URLs is an array\", function () {",
+											"    pm.expect(jsonData.photoUrls).to.be.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"Response does not contain unexpected fields\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"unexpectedField\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"{{petId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "4. Create a pet with an empty category",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Pet with empty category\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"    const category = pm.response.json().category;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"{{petId}}\",\n    \"category\": {},\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 1,\n            \"name\": \"Cute\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response contains pet ID\", function () {",
+											"    pm.expect(jsonData.id).to.exist;",
+											"});",
+											"",
+											"pm.test(\"Pet ID matches stored value\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet name matches request\", function () {",
+											"    pm.expect(jsonData.name).to.equal(pm.environment.get(\"petName\"));",
+											"});",
+											"",
+											"pm.test(\"Pet status is available\", function () {",
+											"    pm.expect(jsonData.status).to.equal(\"available\");",
+											"});",
+											"",
+											"pm.test(\"Tags exist in response\", function () {",
+											"    pm.expect(jsonData.tags).to.be.an(\"array\").that.is.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a valid number\", function () {",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"Pet name is a string\", function () {",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a positive number\", function () {",
+											"    pm.expect(jsonData.id).to.be.greaterThan(0);",
+											"});",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"id\");",
+											"    pm.expect(jsonData).to.have.property(\"name\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is either 'available', 'pending' or 'sold'\", function () {",
+											"    pm.expect([\"available\", \"pending\", \"sold\"]).to.include(jsonData.status);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});",
+											"",
+											"pm.test(\"Photo URLs is an array\", function () {",
+											"    pm.expect(jsonData.photoUrls).to.be.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"Response does not contain unexpected fields\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"unexpectedField\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"{{petId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "5. Create a pet with special characters in its name",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with valid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"{{petId}}\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"Rocky!!\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response contains pet ID\", function () {",
+											"    pm.expect(jsonData.id).to.exist;",
+											"});",
+											"",
+											"pm.test(\"Pet ID matches stored value\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet name matches request\", function () {",
+											"    pm.expect(jsonData.name).to.equal(\"Rocky!!\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is available\", function () {",
+											"    pm.expect(jsonData.status).to.equal(\"available\");",
+											"});",
+											"",
+											"pm.test(\"Pet category exists\", function () {",
+											"    pm.expect(jsonData.category).to.have.property(\"id\");",
+											"    pm.expect(jsonData.category).to.have.property(\"name\");",
+											"});",
+											"",
+											"pm.test(\"Tags exist in response\", function () {",
+											"    pm.expect(jsonData.tags).to.be.an(\"array\").that.is.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a valid number\", function () {",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"Pet name is a string\", function () {",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a positive number\", function () {",
+											"    pm.expect(jsonData.id).to.be.greaterThan(0);",
+											"});",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"id\");",
+											"    pm.expect(jsonData).to.have.property(\"name\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is either 'available', 'pending' or 'sold'\", function () {",
+											"    pm.expect([\"available\", \"pending\", \"sold\"]).to.include(jsonData.status);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});",
+											"",
+											"pm.test(\"Photo URLs is an array\", function () {",
+											"    pm.expect(jsonData.photoUrls).to.be.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"Response does not contain unexpected fields\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"unexpectedField\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"{{petId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Negative Test Scenarios",
+			"item": [
+				{
+					"name": "1. Create a pet that has a large but valid ID",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with valid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(500);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"202509022025090220250902\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/202509022025090220250902",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"202509022025090220250902"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "2. Send an empty request body",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with valid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(405);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "3. Send a request with missing name field",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with valid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"{{petId}}\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    // \"name\": \"{{petName}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response contains pet ID\", function () {",
+											"    pm.expect(jsonData.id).to.exist;",
+											"});",
+											"",
+											"pm.test(\"Pet ID matches stored value\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet status is available\", function () {",
+											"    pm.expect(jsonData.status).to.equal(\"available\");",
+											"});",
+											"",
+											"pm.test(\"Pet category exists\", function () {",
+											"    pm.expect(jsonData.category).to.have.property(\"id\");",
+											"    pm.expect(jsonData.category).to.have.property(\"name\");",
+											"});",
+											"",
+											"pm.test(\"Tags exist in response\", function () {",
+											"    pm.expect(jsonData.tags).to.be.an(\"array\").that.is.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a valid number\", function () {",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a positive number\", function () {",
+											"    pm.expect(jsonData.id).to.be.greaterThan(0);",
+											"});",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"id\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is either 'available', 'pending' or 'sold'\", function () {",
+											"    pm.expect([\"available\", \"pending\", \"sold\"]).to.include(jsonData.status);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});",
+											"",
+											"pm.test(\"Photo URLs is an array\", function () {",
+											"    pm.expect(jsonData.photoUrls).to.be.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"Response does not contain unexpected fields\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"unexpectedField\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"{{petId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "4. Send a request with ID as a negative number",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with valid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"-20250902\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/-20250902",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"-20250902"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "5. Request a pet with ID as a string",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with invalid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(500);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"MyDog\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "6. Request a pet with ID containing special characters",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with invalid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(500);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"MyDog!!\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Edge Case Scenarios",
+			"item": [
+				{
+					"name": "1. Create a pet with a long name",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with valid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"{{petId}}\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"MyFavoriteLoyalAndMostLovedDog\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response contains pet ID\", function () {",
+											"    pm.expect(jsonData.id).to.exist;",
+											"});",
+											"",
+											"pm.test(\"Pet ID matches stored value\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet name matches request\", function () {",
+											"    pm.expect(jsonData.name).to.equal(\"MyFavoriteLoyalAndMostLovedDog\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is available\", function () {",
+											"    pm.expect(jsonData.status).to.equal(\"available\");",
+											"});",
+											"",
+											"pm.test(\"Pet category exists\", function () {",
+											"    pm.expect(jsonData.category).to.have.property(\"id\");",
+											"    pm.expect(jsonData.category).to.have.property(\"name\");",
+											"});",
+											"",
+											"pm.test(\"Tags exist in response\", function () {",
+											"    pm.expect(jsonData.tags).to.be.an(\"array\").that.is.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a valid number\", function () {",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"Pet name is a string\", function () {",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a positive number\", function () {",
+											"    pm.expect(jsonData.id).to.be.greaterThan(0);",
+											"});",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"id\");",
+											"    pm.expect(jsonData).to.have.property(\"name\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is either 'available', 'pending' or 'sold'\", function () {",
+											"    pm.expect([\"available\", \"pending\", \"sold\"]).to.include(jsonData.status);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});",
+											"",
+											"pm.test(\"Photo URLs is an array\", function () {",
+											"    pm.expect(jsonData.photoUrls).to.be.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"Response does not contain unexpected fields\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"unexpectedField\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"{{petId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "2. Create a pet with only numeric name",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with valid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"{{petId}}\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"name\": \"{{petId}}\",\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ],\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response contains pet ID\", function () {",
+											"    pm.expect(jsonData.id).to.exist;",
+											"});",
+											"",
+											"pm.test(\"Pet ID matches stored value\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet name matches request\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet status is available\", function () {",
+											"    pm.expect(jsonData.status).to.equal(\"available\");",
+											"});",
+											"",
+											"pm.test(\"Pet category exists\", function () {",
+											"    pm.expect(jsonData.category).to.have.property(\"id\");",
+											"    pm.expect(jsonData.category).to.have.property(\"name\");",
+											"});",
+											"",
+											"pm.test(\"Tags exist in response\", function () {",
+											"    pm.expect(jsonData.tags).to.be.an(\"array\").that.is.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a valid number\", function () {",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"Pet name is a string\", function () {",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a positive number\", function () {",
+											"    pm.expect(jsonData.id).to.be.greaterThan(0);",
+											"});",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"id\");",
+											"    pm.expect(jsonData).to.have.property(\"name\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is either 'available', 'pending' or 'sold'\", function () {",
+											"    pm.expect([\"available\", \"pending\", \"sold\"]).to.include(jsonData.status);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});",
+											"",
+											"pm.test(\"Photo URLs is an array\", function () {",
+											"    pm.expect(jsonData.photoUrls).to.be.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"Response does not contain unexpected fields\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"unexpectedField\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"{{petId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "3. Create a pet with JSON fields in a different order",
+					"item": [
+						{
+							"name": "Create Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Create pet with valid data\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"    pm.expect(pm.response.json().id).to.not.be.null;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generatePetId() {",
+											"  const today = new Date();",
+											"  const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');",
+											"  const randomNumber = Math.floor(100000 + Math.random() * 900000);",
+											"  return `${dateStr}${randomNumber}`;",
+											"}",
+											"",
+											"const petNames = [\"Sheru\", \"Simba\", \"Raja\", \"Kali\", \"Moti\", \"Rocky\"];",
+											"let randomPet = petNames[Math.floor(Math.random() * petNames.length)];",
+											"",
+											"const petId = generatePetId();",
+											"pm.environment.set(\"petId\", petId);",
+											"pm.environment.set(\"petName\", randomPet);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"{{petId}}\",\n    \"name\": \"{{petName}}\",\n    \"status\": \"available\",\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dog\"\n    },\n    \"photoUrls\": [],\n    \"tags\": [\n        {\n            \"id\": 2,\n            \"name\": \"Sweet\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response contains pet ID\", function () {",
+											"    pm.expect(jsonData.id).to.exist;",
+											"});",
+											"",
+											"pm.test(\"Pet ID matches stored value\", function () {",
+											"    pm.expect(jsonData.id).to.equal(parseInt(pm.environment.get(\"petId\")));",
+											"});",
+											"",
+											"pm.test(\"Pet name matches request\", function () {",
+											"    pm.expect(jsonData.name).to.equal(pm.environment.get(\"petName\"));",
+											"});",
+											"",
+											"pm.test(\"Pet status is available\", function () {",
+											"    pm.expect(jsonData.status).to.equal(\"available\");",
+											"});",
+											"",
+											"pm.test(\"Pet category exists\", function () {",
+											"    pm.expect(jsonData.category).to.have.property(\"id\");",
+											"    pm.expect(jsonData.category).to.have.property(\"name\");",
+											"});",
+											"",
+											"pm.test(\"Tags exist in response\", function () {",
+											"    pm.expect(jsonData.tags).to.be.an(\"array\").that.is.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a valid number\", function () {",
+											"    pm.expect(jsonData.id).to.be.a(\"number\");",
+											"});",
+											"",
+											"pm.test(\"Pet name is a string\", function () {",
+											"    pm.expect(jsonData.name).to.be.a(\"string\");",
+											"});",
+											"",
+											"pm.test(\"Pet ID is a positive number\", function () {",
+											"    pm.expect(jsonData.id).to.be.greaterThan(0);",
+											"});",
+											"",
+											"pm.test(\"Response contains all required fields\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"id\");",
+											"    pm.expect(jsonData).to.have.property(\"name\");",
+											"    pm.expect(jsonData).to.have.property(\"status\");",
+											"});",
+											"",
+											"pm.test(\"Pet status is either 'available', 'pending' or 'sold'\", function () {",
+											"    pm.expect([\"available\", \"pending\", \"sold\"]).to.include(jsonData.status);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 1 second\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+											"});",
+											"",
+											"pm.test(\"Photo URLs is an array\", function () {",
+											"    pm.expect(jsonData.photoUrls).to.be.an(\"array\");",
+											"});",
+											"",
+											"pm.test(\"Response does not contain unexpected fields\", function () {",
+											"    pm.expect(jsonData).to.not.have.property(\"unexpectedField\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"{{petId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "4. Request a pet with ID set to 0",
+					"item": [
+						{
+							"name": "Fetch Pet",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://petstore.swagger.io/v2/pet/0",
+									"protocol": "https",
+									"host": [
+										"petstore",
+										"swagger",
+										"io"
+									],
+									"path": [
+										"v2",
+										"pet",
+										"0"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

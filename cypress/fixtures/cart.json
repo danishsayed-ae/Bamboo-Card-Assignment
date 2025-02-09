@@ -1,0 +1,21 @@
+{
+    "products": [
+        {
+            "name": "Sprite Foam Roller"
+        },
+        {
+            "name": "Affirm Water Bottle"
+        }
+    ],
+    "address": {
+        "firstName": "Danish",
+        "lastName": "Sayed",
+        "company": "Bamboo Card",
+        "street": "JLT",
+        "city": "Dubai",
+        "state": "Dubai",
+        "zip": "000000",
+        "country": "United Arab Emirates",
+        "phone": "+971569774017"
+    }
+}

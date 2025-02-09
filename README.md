@@ -17,43 +17,38 @@ The project follows the **DRY (Don't Repeat Yourself)** and **KISS (Keep It Simp
 
 ## 📂 Folder Structure
 
-├── cypress
-│   ├── e2e
-│   │   ├── tests
-│   │   │   ├── registration.cy.js
-│   │   │   ├── login.cy.js
-│   │   │   ├── product.cy.js
-│   │   │   ├── wishlist.cy.js
-│   │   │   ├── cart.cy.js
-│   │   │   ├── checkout.cy.js
-│   ├── page-objects
-│   │   ├── RegistrationPage.js
-│   │   ├── LoginPage.js
-│   │   ├── ProductPage.js
-│   │   ├── WishlistPage.js
-│   │   ├── ShoppingCartPage.js
-│   │   ├── CheckoutPage.js
-│   │   ├── NavigationPage.js
-│   ├── fixtures
-│   │   ├── user.json
-│   │   ├── cart.json
-│   ├── support
-│   │   ├── commands.js
-├── cypress.config.js
-├── README.md
-├── package.json
+├── cypress  
+│   ├── e2e  
+│   │   ├── tests  
+│   │   │   ├── registration.cy.js  
+│   │   │   ├── login.cy.js  
+│   │   │   ├── product.cy.js  
+│   │   │   ├── wishlist.cy.js  
+│   │   │   ├── cart.cy.js  
+│   │   │   ├── checkout.cy.js  
+│   ├── page-objects  
+│   │   ├── RegistrationPage.js  
+│   │   ├── LoginPage.js  
+│   │   ├── ProductPage.js  
+│   │   ├── WishlistPage.js  
+│   │   ├── ShoppingCartPage.js  
+│   │   ├── CheckoutPage.js  
+│   │   ├── NavigationPage.js  
+│   ├── fixtures  
+│   │   ├── user.json  
+│   │   ├── cart.json  
+│   ├── support  
+│   │   ├── commands.js  
+├── cypress.config.js  
+├── README.md  
+├── package.json  
 
-Installation
-
-Prerequisites
-
-Node.js (v16 or later)
-
-Cypress installed globally or locally in the project
+---
 
 ## 🛠️ Setup & Installation
 ### **1️⃣ Clone the Repository**
 
+```bash
 git clone https://github.com/danishsayed-ae/Bamboo-Card-Assignment.git
 
 

@@ -1,26 +1,21 @@
-Magento E-Commerce Test Automation
+# 🏆 Bamboo Card Assignment - Cypress Automation
 
-Overview
+## 📌 Project Overview
+This repository contains an automated test suite for the **Bamboo Card Assignment**, developed using **Cypress**. The test suite covers end-to-end scenarios including **user registration, login, product search, wishlist management, cart checkout, and address book updates**.
 
-This project is an automated test suite for testing the Magento e-commerce website using Cypress. It covers various critical user journeys, including user registration, login, product search, adding products to the cart, wishlist functionality, checkout process, and order placement.
+The project follows the **DRY (Don't Repeat Yourself)** and **KISS (Keep It Simple, Stupid)** principles to ensure maintainability and efficiency.
 
-Tech Stack
+---
 
-Test Framework: Cypress
+## 🚀 Tech Stack
+- **Cypress** - JavaScript-based test automation framework  
+- **Mocha** - Test runner used by Cypress  
+- **Chai** - Assertion library used for validation  
+- **Mochawesome** - Custom reporting for test execution  
 
-Programming Language: JavaScript
+---
 
-Reporting Library: Mochawesome
-
-Design Patterns: Page Object Model (POM)
-
-Principles Followed
-
-DRY (Don't Repeat Yourself): Reusable page object classes reduce code duplication.
-
-KISS (Keep It Simple, Stupid): The test scripts are easy to read, maintain, and extend.
-
-Project Structure
+## 📂 Folder Structure
 
 ├── cypress
 │   ├── e2e
@@ -56,69 +51,35 @@ Node.js (v16 or later)
 
 Cypress installed globally or locally in the project
 
-Setup
+## 🛠️ Setup & Installation
+### **1️⃣ Clone the Repository**
 
-Clone the repository:
+git clone https://github.com/danishsayed-ae/Bamboo-Card-Assignment.git
 
-git clone <repo-url>
-cd <project-folder>
 
-Install dependencies:
+### Install dependencies:
 
 npm install
 
-Running Tests
+## Running Tests
 
-Run all tests in UI mode:
+### Run all tests in UI mode:
 
 npx cypress open
 
-Run tests in headless mode:
+### Run tests in headless mode:
 
 npx cypress run
 
-Generate Mochawesome Report:
+### Generate Mochawesome Report:
 
 npx cypress run --reporter mochawesome
 
-Test Cases Covered
 
+## Test Cases Covered
 User Registration - Validate successful user registration.
-
 User Login - Verify login with valid credentials.
-
 Product Search & Filtering - Ensure accurate search results.
-
 Add to Cart & Wishlist - Verify cart and wishlist functionalities.
-
 Checkout Process - Validate order placement and confirmation.
-
 Address Management - Update and save address details.
-
-Concurrency & Load Tests - Simulate multiple users interacting with the platform.
-
-Reporting
-
-Tests generate reports using Mochawesome.
-
-Report files are saved in the mochawesome-report directory after execution.
-
-CI/CD Integration
-
-Cypress can be integrated with GitHub Actions, Jenkins, or other CI/CD pipelines for automated execution.
-
-Modify .github/workflows/cypress.yml (if using GitHub Actions) to automate tests on PR merges.
-
-Contribution
-
-Fork the repository
-
-Create a feature branch
-
-Commit changes
-
-Open a pull request
-
-License
-
-This project is licensed under the MIT License.

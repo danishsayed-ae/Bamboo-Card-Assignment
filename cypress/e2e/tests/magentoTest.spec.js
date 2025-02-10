@@ -54,10 +54,10 @@ describe('User registration and login test', () => {
                 onLoginPage.performLogin(user);
                 cy.get('.base').should('have.text', 'My Account');
                 cy.get('.counter-number').invoke('text').then(() => {
-                    onProductPage.searchProductAndAddToCart(cart.products)
+                    onProductPage.searchProductAndAddToCart(cart.products);
                 });
                 navigateTo.shoppingCartPage();
-                cart.products.forEach((product) => {
+                cy.wrap(cart.products).each((product) => {
                     cy.contains('.item', product.name, { timeout: 6000 }).should('be.visible');
                 });
                 onShoppingCartPage.clickProceedToCheckout();
@@ -73,12 +73,12 @@ describe('User registration and login test', () => {
             cy.fixture('cart.json').then((cart) => {
                 navigateTo.loginPage();
                 onLoginPage.performLogin(user);
-                cart.products.forEach((product) => {
+                cy.wrap(cart.products).each((product) => {
                     onProductPage.searchProductAndAddToWishlist(product.name);
                 });
                 onWishlistPage.addAllProductsToCart();
                 navigateTo.shoppingCartPage();
-                cart.products.forEach((product) => {
+                cy.wrap(cart.products).each((product) => {
                     cy.contains('.item', product.name, { timeout: 6000 }).should('be.visible');
                 });
                 onShoppingCartPage.clickProceedToCheckout();
@@ -100,8 +100,8 @@ describe('User registration and login test', () => {
     });
 
     afterEach(() => {
-        cy.get(':nth-child(2) > .customer-welcome > .customer-name > .action', { timeout: 10000 }).click();
-        cy.contains('Sign Out', { timeout: 10000 }).click();
+        cy.get(':nth-child(2) > .customer-welcome > .customer-name > .action', { timeout: 10000 }).should('be.visible').click();
+        cy.contains('Sign Out', { timeout: 10000 }).should('be.visible').click();
         cy.get('.base', { timeout: 10000 }).should('be.visible').and('contain.text', 'You are signed out');
     });
 });
